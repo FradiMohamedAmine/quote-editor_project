@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "simple_form", "~> 5.1.0"
+gem "simple_form", "~> 5.3.1"
 
 gem "devise", "~> 4.9.4"
 
