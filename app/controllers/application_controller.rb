@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
   # allow_browser versions: :modern
   before_action :authenticate_user!, unless: :devise_controller?
   # before_action -> { sleep 3 }
+
   private
 
   def current_company
