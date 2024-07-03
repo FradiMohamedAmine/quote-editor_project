@@ -1,5 +1,5 @@
 class QuotesController < ApplicationController
-    before_action :set_quote, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_quote, only: [ :show, :edit, :update, :destroy ]
 
     def index
       @quotes = current_company.quotes.ordered
@@ -13,9 +13,8 @@ class QuotesController < ApplicationController
     end
 
     def create
-    # Only this first line changes to make sure the association is created
-    @quote = current_company.quotes.build(quote_params)
-
+      # Only this first line changes to make sure the association is created
+      @quote = current_company.quotes.build(quote_params)
 
       if @quote.save
         respond_to do |format|
@@ -23,8 +22,7 @@ class QuotesController < ApplicationController
           format.turbo_stream
         end
       else
-        # Add `status: :unprocessable_entity` here
-        render :new, status: :unprocessable_entity
+        render :new
       end
     end
 
@@ -48,11 +46,10 @@ class QuotesController < ApplicationController
     end
 
     private
-
     def set_quote
-    # We must use current_company.quotes here instead of Quote
-    # for security reasons
-    @quote = current_company.quotes.find(params[:id])
+      # We must use current_company.quotes here instead of Quote
+      # for security reasons
+      @quote = current_company.quotes.find(params[:id])
     end
 
     def quote_params
