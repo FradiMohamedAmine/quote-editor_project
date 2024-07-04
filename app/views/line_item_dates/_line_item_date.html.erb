@@ -1,24 +1,30 @@
 <%= turbo_frame_tag line_item_date do %>
   <div class="line-item-date">
     <div class="line-item-date__header">
-      <!-- All the previous code -->
+      <!-- Header content here -->
     </div>
     <div class="line-item-date__body">
       <div class="line-item line-item--header">
         <div class="line-item__name">Article</div>
         <div class="line-item__quantity">Quantity</div>
         <div class="line-item__price">Price</div>
-        <div class="line-item__actions"></div>
+        <div class="line-item__actions">Actions</div>
       </div>
 
-          <%= render line_item_date.line_items, quote: quote, line_item_date: line_item_date %>
+      <%= turbo_frame_tag nested_dom_id(line_item_date, "line_items") do %>
+        <%= render partial: 'line_items/line_item', collection: line_item_date.line_items,
+                    locals: { quote: quote, line_item_date: line_item_date } %>
+      <% end %>
 
-          <div class="line-item-date__footer">
-            <%= link_to "Add item",
-                        [:new, quote, line_item_date, :line_item],
-                        data: { turbo_frame: "_top" },
-                        class: "btn btn--primary" %>
-          </div>
+      <%= turbo_frame_tag nested_dom_id(line_item_date, LineItem.new) do %>
+        <!-- This frame is for adding a new line item -->
+      <% end %>
+
+      <div class="line-item-date__footer">
+        <%= link_to "Add item", [:new, quote, line_item_date, :line_item],
+                    data: { turbo_frame: nested_dom_id(line_item_date, LineItem.new) },
+                    class: "btn btn--primary" %>
+      </div>
     </div>
   </div>
 <% end %>

@@ -7,11 +7,13 @@ class LineItemsController < ApplicationController
   end
 
   def create
-    @line_item_date = @quote.line_item_dates.find(params[:line_item_date_id])
     @line_item = @line_item_date.line_items.build(line_item_params)
 
     if @line_item.save
-      redirect_to quote_path(@quote), notice: "Item was successfully created."
+      respond_to do |format|
+        format.html { redirect_to quote_path(@quote), notice: "Item was successfully created." }
+        format.turbo_stream { flash.now[:notice] = "Item was successfully created." }
+      end
     else
       render :new, status: :unprocessable_entity
     end
@@ -22,20 +24,23 @@ class LineItemsController < ApplicationController
   end
 
   def update
-    @line_item = @line_item_date.line_items.find(params[:id])
-
     if @line_item.update(line_item_params)
-      redirect_to quote_path(@quote), notice: "Item was successfully updated."
+      respond_to do |format|
+        format.html { redirect_to quote_path(@quote), notice: "Item was successfully updated." }
+        format.turbo_stream { flash.now[:notice] = "Item was successfully updated." }
+      end
     else
       render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
-    @line_item = @line_item_date.line_items.find(params[:id])
     @line_item.destroy
 
-    redirect_to quote_path(@quote), notice: "Item was successfully destroyed."
+    respond_to do |format|
+      format.html { redirect_to quote_path(@quote), notice: "Date was successfully destroyed." }
+      format.turbo_stream { flash.now[:notice] = "Date was successfully destroyed." }
+    end
   end
 
   private
