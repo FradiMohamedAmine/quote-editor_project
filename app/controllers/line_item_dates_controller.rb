@@ -1,51 +1,47 @@
-class LineItemDatesController < ApplicationController
+class LineItemsController < ApplicationController
   before_action :set_quote
-  before_action :set_line_item_date, only: [ :edit, :update, :destroy ]
+  before_action :set_line_item_date, except: [ :new, :create ]
 
   def new
-    @line_item_date = @quote.line_item_dates.build
+    @line_item = @quote.line_item_dates.build.line_items.build
   end
 
   def create
-    @line_item_date = @quote.line_item_dates.build(line_item_date_params)
+    @line_item_date = @quote.line_item_dates.find(params[:line_item_date_id])
+    @line_item = @line_item_date.line_items.build(line_item_params)
 
-    if @line_item_date.save
-      respond_to do |format|
-        format.html { redirect_to quote_path(@quote), notice: "Date was successfully created." }
-        format.turbo_stream { flash.now[:notice] = "Date was successfully created." }
-      end
+    if @line_item.save
+      redirect_to quote_path(@quote), notice: "Item was successfully created."
     else
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
+    @line_item = @line_item_date.line_items.find(params[:id])
   end
 
   def update
-    if @line_item_date.update(line_item_date_params)
-      respond_to do |format|
-        format.html { redirect_to quote_path(@quote), notice: "Date was successfully updated." }
-        format.turbo_stream { flash.now[:notice] = "Date was successfully updated." }
-      end
+    @line_item = @line_item_date.line_items.find(params[:id])
+
+    if @line_item.update(line_item_params)
+      redirect_to quote_path(@quote), notice: "Item was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
   end
 
   def destroy
-    @line_item_date.destroy
+    @line_item = @line_item_date.line_items.find(params[:id])
+    @line_item.destroy
 
-    respond_to do |format|
-      format.html { redirect_to quote_path(@quote), notice: "Date was successfully destroyed." }
-      format.turbo_stream { flash.now[:notice] = "Date was successfully destroyed." }
-    end
+    redirect_to quote_path(@quote), notice: "Item was successfully destroyed."
   end
 
   private
 
-  def line_item_date_params
-    params.require(:line_item_date).permit(:date)
+  def line_item_params
+    params.require(:line_item).permit(:name, :description, :quantity, :unit_price)
   end
 
   def set_quote
@@ -53,6 +49,6 @@ class LineItemDatesController < ApplicationController
   end
 
   def set_line_item_date
-    @line_item_date = @quote.line_item_dates.find(params[:id])
+    @line_item_date = @quote.line_item_dates.find(params[:line_item_date_id])
   end
 end
