@@ -9,60 +9,53 @@ class QuotesController < ApplicationController
     @line_item_dates = @quote.line_item_dates.ordered
   end
 
-    def new
-      @quote = Quote.new
-    end
+  def new
+    @quote = current_company.quotes.build
+  end
 
-    def create
-      # Only this first line changes to make sure the association is created
-      @quote = current_company.quotes.build(quote_params)
+  def create
+    @quote = current_company.quotes.build(quote_params)
 
-      if @quote.save
-        respond_to do |format|
-          format.html { redirect_to quotes_path, notice: "Quote was successfully created." }
-          format.turbo_stream { flash.now[:notice] = "Quote was successfully created." }
-        end
-      else
-        render :new
-      end
-    end
-
-    def edit
-    end
-
-    def update
-      if @quote.update(quote_params)
-        respond_to do |format|
-          format.html { redirect_to quotes_path, notice: "Quote was successfully updated." }
-          format.turbo_stream { flash.now[:notice] = "Quote was successfully updated." }
-        end
-      else
-        render :edit, status: :unprocessable_entity
-      end
-    end
-
-    def destroy
-      @quote.destroy
-
+    if @quote.save
       respond_to do |format|
-        format.html { redirect_to quotes_path, notice: "Quote was successfully destroyed." }
-        format.turbo_stream { flash.now[:notice] = "Quote was successfully destroyed." }
+        format.html { redirect_to quotes_path, notice: "Quote was successfully created." }
+        format.turbo_stream { flash.now[:notice] = "Quote was successfully created." }
       end
+    else
+      render :new
     end
+  end
 
-    # private
+  def edit
+  end
 
-
-
-
-    def set_quote
-      # We must use current_company.quotes here instead of Quote
-      # for security reasons
-      @quote = current_company.quotes.find(params[:id])
+  def update
+    if @quote.update(quote_params)
+      respond_to do |format|
+        format.html { redirect_to quotes_path, notice: "Quote was successfully updated." }
+        format.turbo_stream { flash.now[:notice] = "Quote was successfully updated." }
+      end
+    else
+      render :edit, status: :unprocessable_entity
     end
+  end
 
+  def destroy
+    @quote.destroy
 
-    def quote_params
-      params.require(:quote).permit(:name)
+    respond_to do |format|
+      format.html { redirect_to quotes_path, notice: "Quote was successfully destroyed." }
+      format.turbo_stream { flash.now[:notice] = "Quote was successfully destroyed." }
     end
+  end
+
+  private
+
+  def set_quote
+    @quote = current_company.quotes.find(params[:id])
+  end
+
+  def quote_params
+    params.require(:quote).permit(:name)
+  end
 end
