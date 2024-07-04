@@ -12,4 +12,9 @@ class Quote < ApplicationRecord
   # after_destroy_commit ->(quote) { broadcast_remove_to [ quote.company, "quotes" ] }
   # Those three callbacks are equivalent to the following single line
   broadcasts_to ->(quote) { [ quote.company, "quotes" ] }, inserts_by: :prepend
+
+
+  def total_price
+    line_items.sum(&:total_price)
+  end
 end
